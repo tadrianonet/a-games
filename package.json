@@ -9,7 +9,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "test:e2e": "playwright test",
     "assets:sprites": "node scripts/generate-sprites.mjs",
-    "test:assets": "node scripts/check-sprites.mjs"
+    "test:assets": "node scripts/check-sprites.mjs",
+    "test:game": "node scripts/check-game.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

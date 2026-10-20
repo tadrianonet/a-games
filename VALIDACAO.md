@@ -19,3 +19,14 @@ A suíte pode ser executada fora desse isolamento com os comandos do README. A p
 - Plataformas móveis com atrito para carregar a personagem, inimigos que patrulham e cristais progressivos implementados.
 - Build TypeScript/Vite passou e a primeira fase carregou no navegador com plataforma móvel, nuvem e novo atlas, sem erros JavaScript registrados.
 - A validação completa de colisões com cada obstáculo e de todos os elevadores no tablet físico permanece pendente.
+
+## Atualização: fases ampliadas, corações e chefão
+
+- Plataformas móveis e elevadores removidos do código de jogo. Fases entre 6.210 e 7.150 unidades, com 30 estrelas por mundo, plataformas fixas e mais inimigos.
+- `npm run test:game`: passou; verifica limites dos saltos/gaps, checkpoints, 90 estrelas, proteção contra dano repetido, última vida e migração dos saves antigos.
+- `npm run test:assets` e `npm run build`: passaram.
+- No navegador, uma queda com o último coração mostrou GAME OVER; tentar novamente restaurou cinco corações e preservou a estrela coletada. Outra queda retirou exatamente um coração e retornou ao início.
+- Chefão carregado com barra de 12 pontos. Disparos pelo botão touch reduziram a barra de 12 para 6 e depois 0, exibindo vitória. Nessa verificação específica os ataques foram suspensos por uma opção exclusiva do servidor de desenvolvimento, para isolar os acertos. Ataques ativos, perda de corações e game over também foram observados separadamente na arena.
+- A nova proteção impede múltiplas perdas de coração no mesmo contato. O chefão só acorda ao entrar na arena, com três segundos de preparação.
+- Colisões de projéteis usam grupos, para não acumular novos verificadores a cada tiro.
+- Conclusão de todos os percursos e equilíbrio da dificuldade no tablet físico continuam pendentes.

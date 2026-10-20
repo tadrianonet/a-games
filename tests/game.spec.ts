@@ -12,7 +12,7 @@ test('menu, movement, collection, jump, pause, persistence and album',async({pag
  await page.getByRole('button',{name:'Pausar',exact:true}).click();await expect(page.getByText('Até as estrelas descansam.')).toBeVisible()
  await page.getByRole('button',{name:'Voltar ao início'}).click()
  await page.reload();await expect(page.getByRole('button',{name:'Continuar aventura'})).toBeVisible()
- await page.getByRole('button',{name:'Meu álbum'}).click();await expect(page.getByText(/de 45 estrelas/)).not.toContainText('0 de 45')
+ await page.getByRole('button',{name:'Meu álbum'}).click();await expect(page.getByText(/de 90 estrelas/)).not.toContainText('0 de 90')
  expect(errors).toEqual([])
 })
 test('tablet multitouch, released pointers, portrait guidance',async({browser})=>{

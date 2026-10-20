@@ -1,6 +1,6 @@
 # Agnes e o Reino das Estrelas ✦
 
-Uma aventura 2D de plataformas para Agnes, em português, com React, TypeScript, Vite, Phaser 3 e PWA. Três mundos com cenários e cores próprios, 45 estrelas e nove amigos estelares originais chamados Lumas. A personagem é uma interpretação ilustrada da referência: cabelo castanho, vestido azul, coroa e varinha. A fotografia não está incluída no projeto.
+Uma aventura 2D de plataformas para Agnes, em português, com React, TypeScript, Vite, Phaser 3 e PWA. Três mundos ampliados e uma arena final com chefão, 90 estrelas e nove amigos estelares originais chamados Lumas. A personagem é uma interpretação ilustrada da referência: cabelo castanho, vestido azul, coroa e varinha. A fotografia não está incluída no projeto.
 
 ![Menu da aventura](preview-menu.png)
 
@@ -24,11 +24,14 @@ O preview normalmente abre em http://localhost:4173. O servidor aceita conexões
 
 ## Brincar
 
-- Teclado: ← / → para andar, ↑ ou espaço para pular, X para magia.
+- Teclado: ← / → para andar, ↑ ou espaço para pular, X para disparar magia. Segure para atirar continuamente.
 - Tablet: setas à esquerda, magia e pulo à direita. Os controles aceitam vários dedos ao mesmo tempo e liberam as ações ao cancelar um toque.
-- Segurar o pulo leva mais alto; toques curtos produzem pulos menores. A magia recolhe itens em um raio próximo.
+- Segurar o pulo leva mais alto; toques curtos produzem pulos menores. A magia também recolhe itens em um raio próximo.
 - Reúna os três Lumas e atravesse o portal para concluir cada mundo.
-- Os pontos de luz salvam o ponto de retorno. Cair não tira vidas nem os itens encontrados.
+- Os pontos de luz salvam o ponto de retorno. Cair tira um dos cinco corações e devolve Agnes ao ponto de retorno. Os itens encontrados são preservados.
+- Encostar em inimigos ou cristais tira apenas um coração, sem retorno ao checkpoint, com proteção temporária de 1,8 segundo.
+- Ao zerar os corações, aparece GAME OVER. Tentar novamente reinicia a fase com cinco corações e mantém os colecionáveis.
+- Depois do terceiro mundo, a arena final desbloqueia. Acerte doze tiros no Guardião e desvie dos feitiços; ele fica mais rápido com metade da energia.
 - O álbum registra os nove amigos. Os mundos seguintes desbloqueiam ao concluir o anterior.
 - Progresso e som ficam no armazenamento local do navegador. Limpar os dados do site apaga esse progresso. Não há conta nem sincronização entre dispositivos.
 
@@ -85,7 +88,11 @@ A suíte E2E cobre menu, coleta, salto, pausa, salvamento, dois toques simultân
 - `public/`: ilustrações SVG originais, ícones PNG e fundos locais.
 - `vite.config.ts`: build, manifest e service worker gerado por vite-plugin-pwa.
 
-Os três mundos compartilham a base de plataformas neste MVP, com temas, colecionáveis e desafios progressivos: uma a três plataformas móveis, uma a três nuvens inimigas e cristais a partir do segundo mundo. Plataformas douradas carregam Agnes; nuvens patrulham as ilhas e podem ser dispersas pela magia ou por um pulo sobre elas. Colisões devolvem Agnes ao checkpoint com breve proteção, sem perder itens. A arte é vetorial estilizada, com sprites animados no jogo, com 18 quadros de animação (passos, repouso, subida, queda e aterrissagem) e efeitos de partículas; não é uma reprodução fotográfica da referência. Não há anúncios, analytics, serviços de backend ou assets remotos em tempo de execução.
+As plataformas móveis foram removidas. Os mundos agora têm aproximadamente 6.200 a 7.200 unidades de extensão, 30 estrelas por mundo, mais de 30 plataformas fixas e 6, 12 e 13 inimigos, respectivamente. Dois checkpoints dividem cada percurso. Há três Lumas em cada mundo e uma arena final separada, com chão contínuo, plataformas fixas para saltar, chefão, barra de energia e duas etapas de ataque.
+
+A personagem usa 18 quadros de animação. O projeto preserva os colecionáveis das versões anteriores e adiciona cinco corações aos saves antigos. Corredores, vidas e chefão têm verificações em `npm run test:game`, também executadas no GitHub Actions. As opções de teste `test-world`, `test-lives` e `test-passive` só existem no servidor de desenvolvimento e são eliminadas do build publicado.
+
+Não há anúncios, analytics, serviços de backend ou assets remotos em tempo de execução.
 
 ## Arte e dependências
 
