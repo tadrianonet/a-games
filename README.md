@@ -85,10 +85,14 @@ A suíte E2E cobre menu, coleta, salto, pausa, salvamento, dois toques simultân
 - `public/`: ilustrações SVG originais, ícones PNG e fundos locais.
 - `vite.config.ts`: build, manifest e service worker gerado por vite-plugin-pwa.
 
-Os três mundos compartilham o desenho de plataformas neste MVP, com temas e colecionáveis separados. A arte é vetorial estilizada e estática, com inclinação ao caminhar e efeitos de partículas; não é uma reprodução fotográfica da referência. Não há anúncios, analytics, serviços de backend ou assets remotos em tempo de execução.
+Os três mundos compartilham a base de plataformas neste MVP, com temas, colecionáveis e desafios progressivos: uma a três plataformas móveis, uma a três nuvens inimigas e cristais a partir do segundo mundo. Plataformas douradas carregam Agnes; nuvens patrulham as ilhas e podem ser dispersas pela magia ou por um pulo sobre elas. Colisões devolvem Agnes ao checkpoint com breve proteção, sem perder itens. A arte é vetorial estilizada, com sprites animados no jogo, com 18 quadros de animação (passos, repouso, subida, queda e aterrissagem) e efeitos de partículas; não é uma reprodução fotográfica da referência. Não há anúncios, analytics, serviços de backend ou assets remotos em tempo de execução.
 
 ## Arte e dependências
 
 A arte do projeto foi desenhada para esta entrega. Não usa sprites, música, personagens ou logos de jogos comerciais. O nome Luma aqui identifica amigos estelares com desenho próprio. Os efeitos sonoros são sintetizados localmente. A imagem enviada como referência visual e a fotografia familiar não são distribuídas.
 
 Dependências mantêm suas próprias licenças (incluindo MIT para React, Vite e Phaser). Consulte os arquivos de licença nos respectivos pacotes. Documentação técnica: [Phaser Arcade Physics](https://docs.phaser.io/phaser/concepts/physics/arcade), [Vite PWA](https://vite-pwa-org.netlify.app/guide/), [GitHub Pages Actions](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+
+### Reconstruir os sprites
+
+`npm run assets:sprites` gera o atlas PNG a partir da personagem SVG original. `npm run test:assets` verifica os 18 quadros, as oito poses de caminhada e as bordas para detectar recortes. O atlas já está no repositório; os jogadores não precisam instalar ferramentas de arte.

@@ -11,3 +11,11 @@
 - Multitouch físico, instalação em iPad/Android, todos os percursos até o portal e execução offline em aparelho não foram verificados em dispositivo físico.
 
 A suíte pode ser executada fora desse isolamento com os comandos do README. A publicação tem uma validação adicional de build no GitHub Actions.
+
+## Atualização: animações e desafios
+
+- Atlas original de 18 quadros gerado, com oito passos diferentes. Verificação automatizada das bordas passou, sem cortes nos quadros.
+- Estados de repouso, caminhada, subida, ápice, queda e aterrissagem ligados à física.
+- Plataformas móveis com atrito para carregar a personagem, inimigos que patrulham e cristais progressivos implementados.
+- Build TypeScript/Vite passou e a primeira fase carregou no navegador com plataforma móvel, nuvem e novo atlas, sem erros JavaScript registrados.
+- A validação completa de colisões com cada obstáculo e de todos os elevadores no tablet físico permanece pendente.
