@@ -1,0 +1,13 @@
+# Validação — 20/10/2026
+
+- `npm run build`: passou. Inclui TypeScript em modo estrito e build Vite.
+- vite-plugin-pwa gerou manifest, service worker e precache com todos os SVGs, PNGs, HTML, JS e CSS (aproximadamente 1,8 MB sem compressão).
+- Versão de produção aberta no navegador: personagem, plataformas e HUD renderizados; movimento, coleta de uma estrela, salto/retorno de queda, pausa e retorno ao menu verificados.
+- Progresso permaneceu após recarregar; álbum mostrou a estrela coletada.
+- Aviso inicial de preparação offline exibido. Cache gerado confirmado pelo build; modo avião real ainda precisa ser testado no tablet.
+- Menu e jogo inspecionados no formato 1024 × 768; orientação retrato mostra a indicação para girar o aparelho.
+- Nenhum erro JavaScript registrado no console da sessão inspecionada.
+- Suíte Playwright incluída. Sua execução neste ambiente não chegou a iniciar os testes: o isolamento do macOS bloqueou a abertura do Chromium (MachPortRendezvous / permission denied). Isso é uma limitação da execução do navegador, não um resultado de aprovação dos testes.
+- Multitouch físico, instalação em iPad/Android, todos os percursos até o portal e execução offline em aparelho não foram verificados em dispositivo físico.
+
+A suíte pode ser executada fora desse isolamento com os comandos do README. A publicação tem uma validação adicional de build no GitHub Actions.
