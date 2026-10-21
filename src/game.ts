@@ -1,9 +1,10 @@
 import Phaser from 'phaser'
 import type { Progress } from './progress'
 import {level,damage} from './levels'
+import {MAX_MANA,SPELLS,restore,spend,type Spell} from './resources'
 export const input={left:false,right:false,jump:false,magic:false}
 export function clearInput(){input.left=input.right=input.jump=input.magic=false}
-export type GameEvent={type:'progress';progress:Progress}|{type:'message';text:string}|{type:'win'}|{type:'gameover'}|{type:'health';lives:number}|{type:'boss';hp:number;max:number}
+export type GameEvent={type:'progress';progress:Progress}|{type:'message';text:string}|{type:'win'}|{type:'gameover'}|{type:'health';lives:number}|{type:'boss';hp:number;max:number}|{type:'magic';mana:number;spell:Spell}
 export type GameOptions={progress:Progress;onEvent:(event:GameEvent)=>void}
 export class Kingdom extends Phaser.Scene {
  player!:Phaser.Physics.Arcade.Sprite
@@ -15,6 +16,7 @@ export class Kingdom extends Phaser.Scene {
  boss?:Phaser.Physics.Arcade.Image
  bossHp=12
  bossAwake=false
+ emptyMagicAt=-5000
  bossHitAt=-1000
  nextBossAttack=0
  projectiles!:Phaser.Physics.Arcade.Group
@@ -38,7 +40,7 @@ export class Kingdom extends Phaser.Scene {
  progress:Progress
  onEvent:GameOptions['onEvent']
  constructor(options:GameOptions){super('kingdom');this.progress=structuredClone(options.progress);this.onEvent=options.onEvent}
- preload(){this.load.spritesheet('agnes-motion',`${import.meta.env.BASE_URL}agnes-sprites.png`,{frameWidth:240,frameHeight:270});for(const s of ['agnes','star','luma','guardian'])this.load.svg(s,`${import.meta.env.BASE_URL}${s}.svg`);this.load.svg('world',`${import.meta.env.BASE_URL}world-${Math.min(2,this.progress.world)}.svg`)}
+ preload(){this.load.spritesheet('agnes-motion',`${import.meta.env.BASE_URL}agnes-sprites.png`,{frameWidth:240,frameHeight:270});for(const s of ['agnes','star','luma','guardian','heart','crystal'])this.load.svg(s,`${import.meta.env.BASE_URL}${s}.svg`);this.load.svg('world',`${import.meta.env.BASE_URL}world-${Math.min(2,this.progress.world)}.svg`)}
  create(){
   const w=Math.min(2,this.progress.world)
   const finale=this.progress.world===3
@@ -76,6 +78,8 @@ export class Kingdom extends Phaser.Scene {
   this.createChallenges(w,finale)
   if(finale)this.createBoss()
   this.onEvent({type:"health",lives:this.progress.lives})
+  this.emitMagic()
+  this.createSupplies(finale)
   if(this.progress.lives===0)this.time.delayedCall(50,()=>this.endGame())
   this.cameras.main.startFollow(this.player,true,.09,.09,0,70)
   this.keys=this.input.keyboard!.createCursorKeys();this.magicKey=this.input.keyboard!.addKey('X')
@@ -166,16 +170,52 @@ export class Kingdom extends Phaser.Scene {
   this.tweens.killTweensOf(this.player);this.player.setAlpha(1)
   this.tweens.add({targets:this.player,alpha:.35,duration:100,yoyo:true,repeat:8,onComplete:()=>this.player.setAlpha(1)})
  }
+ emitMagic(){this.onEvent({type:'magic',mana:this.progress.mana,spell:this.progress.spell})}
+ createSupplies(finale:boolean){
+  const supply=(x:number,y:number,type:'heart'|'mana',spell?:Spell)=>{
+   const color=type==='heart'?0xffa4bc:spell?SPELLS[spell].color:0xd7ffff
+   const item=this.physics.add.staticImage(x,y,type==='heart'?'heart':'crystal').setDisplaySize(29,32).setTint(color).refreshBody()
+   const label=this.add.text(x,y-27,type==='heart'?'♥ +1':spell?({gold:'LUZ',blue:'COMETA',violet:'ESTRELA'}[spell])+' +40':'MAGIA +50',{fontFamily:'sans-serif',fontSize:'9px',color:type==='heart'?'#ffd3df':'#e4f6ff',stroke:'#15233b',strokeThickness:3}).setOrigin(.5).setDepth(4)
+   const tween=this.tweens.add({targets:[item,label],y:'-=5',duration:1100,yoyo:true,repeat:-1,onUpdate:()=>{if(item.active&&item.visible)item.refreshBody()}})
+   this.physics.add.overlap(this.player,item,()=>{
+    if(!item.visible||this.gameOver||this.won)return
+    if(type==='heart'){
+     if(this.progress.lives>=5)return
+     this.progress.lives=restore(this.progress.lives,1,5);this.onEvent({type:'health',lives:this.progress.lives});this.message('Um coração recuperado! ♥')
+    }else{
+     if(this.progress.mana===MAX_MANA&&(!spell||spell===this.progress.spell))return
+     this.progress.mana=restore(this.progress.mana,spell?40:50,MAX_MANA)
+     if(spell)this.progress.spell=spell
+     this.emitMagic();this.message(`${spell?'Magia '+SPELLS[spell].name+' equipada! ':''}Magia recarregada. ◈`)
+    }
+    this.persist();this.sparkle(item.x,item.y);this.chime(800)
+    item.disableBody(true,true);label.setVisible(false);tween.pause()
+    this.time.delayedCall(type==='heart'?30000:12000,()=>{if(!item.scene)return;item.enableBody(false,0,0,true,true);item.refreshBody();label.setVisible(true);tween.resume()})
+   })
+  }
+  if(finale){supply(300,415,'heart');supply(1000,415,'heart');supply(340,415,'mana','blue');supply(690,415,'mana');supply(1120,415,'mana','violet');supply(1550,415,'mana');return}
+  supply(250,415,'heart');supply(290,415,'mana','blue')
+  this.layout.ground.slice(1).forEach((p,i)=>{
+   supply(p.x-70,415,'mana',(['gold','blue','violet'] as Spell[])[i%3])
+   if(i%2===0)supply(p.x+95,415,'heart')
+  })
+ }
  shoot(){
+  const remaining=spend(this.progress.mana,this.progress.spell)
+  if(remaining===null){if(this.time.now-this.emptyMagicAt>2500){this.emptyMagicAt=this.time.now;this.message('Magia vazia! Pegue um cristal para recarregar. ◈')}return false}
+  const spell=SPELLS[this.progress.spell]
+  this.progress.mana=remaining;this.emitMagic();this.persist()
   const shot=this.projectiles.create(this.player.x+this.facing*25,this.player.y-10,'star') as Phaser.Physics.Arcade.Image
-  shot.setDisplaySize(20,20).setVelocityX(this.facing*560).setDepth(12);shot.body!.setSize(35,35)
+  shot.setDisplaySize(spell.size,spell.size).setTint(spell.color).setData('damage',spell.damage).setVelocityX(this.facing*spell.speed).setDepth(12);shot.body!.setSize(35,35)
   this.time.delayedCall(1600,()=>{if(shot.active)shot.destroy()})
   this.chime(660)
+  return true
  }
  hitBoss(shot:Phaser.Physics.Arcade.Image){
-   if(!shot.active||!this.boss?.active||this.gameOver||this.won)return;shot.destroy()
+   if(!shot.active||!this.boss?.active||this.gameOver||this.won)return
+   const power=shot.getData('damage')??1;shot.destroy()
    if(this.time.now-this.bossHitAt<240)return
-   this.bossHitAt=this.time.now;this.bossHp--;this.onEvent({type:'boss',hp:this.bossHp,max:12});this.sparkle(this.boss.x,this.boss.y);this.chime(850)
+   this.bossHitAt=this.time.now;this.bossHp=Math.max(0,this.bossHp-power);this.onEvent({type:'boss',hp:this.bossHp,max:12});this.sparkle(this.boss.x,this.boss.y);this.chime(850)
    this.boss.setTint(0xffe3a5);this.time.delayedCall(150,()=>{if(this.boss?.active)this.boss.clearTint()})
    if(this.bossHp===0){this.boss.destroy();this.threats.clear(true,true);this.won=true;this.player.setVelocity(0);if(!this.progress.completed.includes(3))this.progress.completed.push(3);this.progress.checkpoint=0;this.persist();this.onEvent({type:'win'})}
  }
@@ -242,7 +282,7 @@ export class Kingdom extends Phaser.Scene {
   this.player.setVelocityX(time<this.hurtUntil?this.knockback:direction*265)
   if(direction){this.facing=direction;this.player.setFlipX(direction<0)}
   this.animatePlayer(time)
-  if(magic&&time-this.magicAt>350){this.magicAt=time;this.shoot();for(const c of this.collectibles)if(c.sprite.active&&Phaser.Math.Distance.Between(this.player.x,this.player.y,c.sprite.x,c.sprite.y)<110)this.take(c.sprite,c.id,c.luma)}
+  if(magic&&time-this.magicAt>350){this.magicAt=time;if(this.shoot())for(const c of this.collectibles)if(c.sprite.active&&Phaser.Math.Distance.Between(this.player.x,this.player.y,c.sprite.x,c.sprite.y)<110)this.take(c.sprite,c.id,c.luma)}
   this.magicWas=magic
   if(this.player.y>650)this.hurt(true)
  }

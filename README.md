@@ -103,3 +103,16 @@ Dependências mantêm suas próprias licenças (incluindo MIT para React, Vite e
 ### Reconstruir os sprites
 
 `npm run assets:sprites` gera o atlas PNG a partir da personagem SVG original. `npm run test:assets` verifica os 18 quadros, as oito poses de caminhada e as bordas para detectar recortes. O atlas já está no repositório; os jogadores não precisam instalar ferramentas de arte.
+
+## Corações, cristais e tipos de magia
+
+A primeira partida começa com cinco corações e 100 de magia. Continuar preserva os recursos salvos; tentar novamente após game over restaura cinco corações e 100 de magia.
+
+- Coração rosa: recupera um coração, até cinco. Não é consumido se a vida estiver cheia. Reaparece após 30 segundos.
+- Cristal branco: recupera 50 de magia, mantendo o feitiço.
+- Cristais coloridos: recuperam 40 de magia e equipam o tipo da cor. Reaparecem após 12 segundos.
+- Dourado — Luz dourada: 8 de magia por tiro, dano 1.
+- Azul — Cometa azul: 6 de magia por tiro, dano 1, disparo mais rápido.
+- Violeta — Estrela violeta: 12 de magia por tiro, dano 2 contra o chefão.
+
+A barra no canto mostra nome, cor e energia do feitiço. A magia tem limite de 100; sem energia suficiente, a varinha não dispara. Há corações e cristais também na arena, e os cristais reaparecem para permitir recarga durante a batalha. Itens recolhidos reaparecem ao reiniciar uma fase. Os saves antigos recebem magia cheia e o feitiço dourado, preservando estrelas e amigos.

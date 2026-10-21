@@ -30,3 +30,11 @@ A suíte pode ser executada fora desse isolamento com os comandos do README. A p
 - A nova proteção impede múltiplas perdas de coração no mesmo contato. O chefão só acorda ao entrar na arena, com três segundos de preparação.
 - Colisões de projéteis usam grupos, para não acumular novos verificadores a cada tiro.
 - Conclusão de todos os percursos e equilíbrio da dificuldade no tablet físico continuam pendentes.
+
+## Atualização: cura e magia limitada
+
+- Testes de primeira partida com corações/magia cheios, continuação sem recarga gratuita, limites de cura, custos dos três feitiços e persistência de recursos incluídos em `test:game`.
+- No navegador, magia zerada não disparou e exibiu a orientação de procurar cristal. Um coração elevou a vida de 2 para 3; cristal azul elevou a magia de 0 para 40 e equipou Cometa azul. Dois disparos reduziram a barra de 40 para 28 e dispersaram uma nuvem.
+- Ícones de cura/cristal originais em SVG, cores com nomes no HUD e indicação de magia vazia no botão touch.
+- Na arena, o cristal violeta elevou magia para 100, um tiro consumiu 12 e retirou dois pontos do chefão. Permanecer no local após o reaparecimento do cristal recarregou de 88 para 100.
+- Primeira partida em origem nova, usando o build de produção sem opções de teste: HUD confirmou 5/5 corações e 100/100 de Luz dourada, sem erros JavaScript registrados.
